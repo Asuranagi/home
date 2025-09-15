@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -13,54 +12,59 @@ const rubToUsd = 0.012038
 const rubToEur = 0.010262
 
 func main() {
-
-	// fmt.Printf("1 Usd = %.2f Eur\n", usdToEur)
-	// fmt.Printf("1 Usd = %.2f Rub\n", usdToRub)
-	// fmt.Printf("1 Eur = %.2f Rub\n", eurToRub)
-
 	for {
-		fmt.Println("Конвертация")
-		original, number, target := userMessage()
-		a, err := calculation(original, number, target)
-		if err != nil {
-			panic("Error")
-		}
-		fmt.Println(a)
-		result := convert(original, number, target)
-		fmt.Println(result)
-		checkUserQuestion := questions()
-		if !checkUserQuestion {
+		fmt.Println("`===` Конвертер валют `===`")
+		original := inputCurrency("исходную")
+		amount := inputAmount()
+		target := inputCurrency("целевую")
+		result := convert(original, amount, target)
+		fmt.Printf("Результат: %.2f %s\n", result, target)
+		ascQ := questions()
+		if !ascQ {
 			break
 		}
 	}
 }
-func userMessage() (string, float64, string) {
-	var original string
-	var number float64
-	var target string
-	fmt.Print("Введите исходную валюту(USD, EUR, RUB): ")
-	fmt.Scan(&original)
-	fmt.Print("Введите число: ")
-	fmt.Scan(&number)
-	fmt.Print("Введите цулевую валюту: ")
-	fmt.Scan(&target)
-	return original, number, target
+func inputCurrency(currencyType string) string {
+	validCurrencies := []string{"USD", "EUR", "RUB"}
+	for {
+		fmt.Printf("Введите %s валюту (USD, EUR, RUB): ", currencyType)
+		var currency string
+		fmt.Scan(&currency)
+		for _, valid := range validCurrencies {
+			if currency == valid {
+				return currency
+			}
+		}
+		fmt.Println("Ошибка! Доступные валюты: USD, EUR, RUB")
+	}
+}
+func inputAmount() float64 {
+	for {
+		fmt.Print("Введите сумму: ")
+		var amount float64
+		fmt.Scan(&amount)
+		if amount > 0 {
+			return amount
+		}
+		fmt.Println("Ошибка! Сумма должна быть больше 0")
+	}
 }
 
-func calculation(original string, number float64, target string) (string, error) {
-	var a string = "Успешно"
-	if original != "USD" && original != "EUR" && original != "RUB" {
-		return "Неподходящая валюта", errors.New("Введите правильные значения")
-	}
-	if number <= 0 {
-		return "Неподходящее значение", errors.New("Введите правильные значения")
+// func calculation(original string, number float64, target string) (string, error) {
+// 	var a string = "Успешно"
+// 	if original != "USD" && original != "EUR" && original != "RUB" {
+// 		return "Неподходящая валюта", errors.New("Введите правильные значения")
+// 	}
+// 	if number <= 0 {
+// 		return "Неподходящее значение", errors.New("Введите правильные значения")
 
-	}
-	if target != "USD" && original != "EUR" && original != "RUB" && target == original {
-		return "Неподходящая валюта или одинаковое значение с исходной валютой", errors.New("Введите правильные значения")
-	}
-	return a, nil
-}
+//		}
+//		if target != "USD" && original != "EUR" && original != "RUB" && target == original {
+//			return "Неподходящая валюта или одинаковое значение с исходной валютой", errors.New("Введите правильные значения")
+//		}
+//		return a, nil
+//	}
 func convert(original string, number float64, target string) float64 {
 	switch original + "_" + target {
 	case "USD_EUR":
@@ -70,11 +74,11 @@ func convert(original string, number float64, target string) float64 {
 	case "USD_RUB":
 		return number * usdToRub
 	case "RUB_USD":
-		return number / rubToUsd
+		return number * rubToUsd
 	case "EUR_RUB":
 		return number * eurToRub
 	case "RUB_EUR":
-		return number / rubToEur
+		return number * rubToEur
 	default:
 		return number
 	}
