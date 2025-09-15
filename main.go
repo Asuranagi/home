@@ -9,4 +9,14 @@ func main() {
 	fmt.Printf("1 Usd = %.2f Eur\n", usdToEur)
 	fmt.Printf("1 Usd = %.2f Rub\n", usdToRub)
 	fmt.Printf("1 Eur = %.2f Rub\n", eurToRub)
+	userMessage()
+}
+func userMessage() string {
+	var res string
+	fmt.Print("Введите что-то: ")
+	fmt.Scan(&res)
+	return res
+}
+func calculation(a int, b, c string) {
+	return
 }
