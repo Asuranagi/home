@@ -2,14 +2,17 @@ package main
 
 import (
 	"fmt"
+	"strings"
 )
 
-const usdToEur = 0.85
-const usdToRub = 84.1
-const eurToRub = usdToRub / usdToEur
-const eurToUsd = 1.18
-const rubToUsd = 0.012038
-const rubToEur = 0.010262
+var m = map[string]float64{
+	"USD_EUR": 0.85,
+	"USD_RUB": 84.1,
+	"EUR_RUB": 98,
+	"EUR_USD": 1.18,
+	"RUB_USD": 0.012038,
+	"RUB_EUR": 0.010262,
+}
 
 func main() {
 	for {
@@ -31,6 +34,7 @@ func inputCurrency(currencyType string) string {
 		fmt.Printf("Введите %s валюту (USD, EUR, RUB): ", currencyType)
 		var currency string
 		fmt.Scan(&currency)
+		currency = strings.ToUpper(currency)
 		for _, valid := range validCurrencies {
 			if currency == valid {
 				return currency
@@ -43,46 +47,27 @@ func inputAmount() float64 {
 	for {
 		fmt.Print("Введите сумму: ")
 		var amount float64
-		fmt.Scan(&amount)
-		if amount > 0 {
+		n, err := fmt.Scan(&amount)
+		if n == 1 && err == nil && amount > 0 {
 			return amount
 		}
 		fmt.Println("Ошибка! Сумма должна быть больше 0")
 	}
 }
 
-// func calculation(original string, number float64, target string) (string, error) {
-// 	var a string = "Успешно"
-// 	if original != "USD" && original != "EUR" && original != "RUB" {
-// 		return "Неподходящая валюта", errors.New("Введите правильные значения")
-// 	}
-// 	if number <= 0 {
-// 		return "Неподходящее значение", errors.New("Введите правильные значения")
-
-//		}
-//		if target != "USD" && original != "EUR" && original != "RUB" && target == original {
-//			return "Неподходящая валюта или одинаковое значение с исходной валютой", errors.New("Введите правильные значения")
-//		}
-//		return a, nil
-//	}
-func convert(original string, number float64, target string) float64 {
-	switch original + "_" + target {
-	case "USD_EUR":
-		return number * usdToEur
-	case "EUR_USD":
-		return number * eurToUsd
-	case "USD_RUB":
-		return number * usdToRub
-	case "RUB_USD":
-		return number * rubToUsd
-	case "EUR_RUB":
-		return number * eurToRub
-	case "RUB_EUR":
-		return number * rubToEur
-	default:
-		return number
+func convert(original string, amount float64, target string) float64 {
+	if original == target {
+		return amount
 	}
+	key := original + "_" + target
+	rate, ok := m[key]
+	if !ok {
+		fmt.Println("Такой валютной пары нет в базе. Конвертация невозможна!")
+		return 0
+	}
+	return amount * rate
 }
+
 func questions() bool {
 	var question string
 	fmt.Print("Желаете ли повторить программу?")
