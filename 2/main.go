@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 	"strconv"
+	"strings"
 )
 
 func main() {
@@ -30,15 +31,13 @@ func inputUserStr() string {
 	}
 }
 func inputUserNumber() []int {
+	var number string
+	fmt.Print("Введите числа которую хотите обработать: ")
+	fmt.Scan(&number)
+	parts := strings.Split(number, ",")
 	inputUsNu := []int{}
-	for {
-		var number string
-		fmt.Print("Введите числа которую хотите обработать: ")
-		fmt.Scan(&number)
-		if number == "end" {
-			break
-		}
-		num, err := strconv.Atoi(number)
+	for _, p := range parts {
+		num, err := strconv.Atoi(strings.TrimSpace(p))
 		if err != nil {
 			fmt.Println("Введите правильно число")
 			continue
@@ -47,6 +46,7 @@ func inputUserNumber() []int {
 	}
 	return inputUsNu
 }
+
 func calculate(operation string, number []int) float64 {
 	for {
 		switch operation {
