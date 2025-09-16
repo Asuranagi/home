@@ -5,13 +5,18 @@ import (
 	"strings"
 )
 
-var m = map[string]float64{
-	"USD_EUR": 0.85,
-	"USD_RUB": 84.1,
-	"EUR_RUB": 98,
-	"EUR_USD": 1.18,
-	"RUB_USD": 0.012038,
-	"RUB_EUR": 0.010262,
+//	var m = map[string]float64{
+//		"USD_EUR": 0.85,
+//		"USD_RUB": 84.1,
+//		"EUR_RUB": 98,
+//		"EUR_USD": 1.18,
+//		"RUB_USD": 0.012038,
+//		"RUB_EUR": 0.010262,
+//	}
+var m = map[string]map[string]float64{
+	"USD": {"EUR": 0.85, "RUB": 84.1},
+	"EUR": {"USD": 1.18, "RUB": 98},
+	"RUB": {"USD": 0.012038, "EUR": 0.010262},
 }
 
 func main() {
@@ -55,17 +60,29 @@ func inputAmount() float64 {
 	}
 }
 
+//	func convert(original string, amount float64, target string) float64 {
+//		if original == target {
+//			return amount
+//		}
+//		key := original + "_" + target
+//		rate, ok := m[key]
+//		if !ok {
+//			fmt.Println("Такой валютной пары нет в базе. Конвертация невозможна!")
+//			return 0
+//		}
+//		return amount * rate
+//	}
 func convert(original string, amount float64, target string) float64 {
 	if original == target {
 		return amount
 	}
-	key := original + "_" + target
-	rate, ok := m[key]
-	if !ok {
-		fmt.Println("Такой валютной пары нет в базе. Конвертация невозможна!")
-		return 0
+	if targets, ok := m[original]; ok {
+		if rate, ok := targets[target]; ok {
+			return amount * rate
+		}
 	}
-	return amount * rate
+	fmt.Println("Нет курса для выбранной пары валют!")
+	return 0
 }
 
 func questions() bool {
