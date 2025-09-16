@@ -25,7 +25,7 @@ func main() {
 		original := inputCurrency("исходную")
 		amount := inputAmount()
 		target := inputCurrency("целевую")
-		result := convert(original, amount, target)
+		result := convert(&m, original, amount, target)
 		fmt.Printf("Результат: %.2f %s\n", result, target)
 		ascQ := questions()
 		if !ascQ {
