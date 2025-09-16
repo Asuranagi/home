@@ -72,7 +72,8 @@ func inputAmount() float64 {
 //		}
 //		return amount * rate
 //	}
-func convert(original string, amount float64, target string) float64 {
+func convert(ratesPtr *map[string]map[string]float64, original string, amount float64, target string) float64 {
+	m := *ratesPtr
 	if original == target {
 		return amount
 	}
